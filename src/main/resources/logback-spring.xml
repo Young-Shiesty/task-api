@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%-5level [%thread] %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
+
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
         <http>
-            <url>http://<ADRESSE-IP-VM2>:3100/loki/api/v1/push</url>
+            <url>http://192.168.1.21:3100/loki/api/v1/push</url>
+            <connectionTimeoutMs>5000</connectionTimeoutMs>
+            <requestTimeoutMs>5000</requestTimeoutMs>
         </http>
         <format>
             <label>
@@ -19,9 +23,14 @@
         </format>
     </appender>
 
+    <appender name="ASYNC_LOKI" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="LOKI"/>
+        <neverBlock>true</neverBlock>
+    </appender>
+
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="LOKI"/>
+        <appender-ref ref="ASYNC_LOKI"/>
     </root>
 
 </configuration>

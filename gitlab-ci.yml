@@ -1,0 +1,35 @@
+stages:
+  - test
+  - build
+  - docker
+
+test:
+  stage: test
+  image: maven:3.9.6-eclipse-temurin-17
+  script:
+    - mvn test
+  only:
+    - develop
+
+build:
+  stage: build
+  image: maven:3.9.6-eclipse-temurin-17
+  script:
+    - mvn package -DskipTests
+  artifacts:
+    paths:
+      - target/*.jar
+  only:
+    - develop
+
+docker:
+  stage: docker
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  script:
+    - docker login -u $young-shiesty -p $Mamadou18
+    - docker build -t $youngshiesty:latest .
+    - docker push $DOCKER_IMAGE:latest
+  only:
+    - develop
